@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	"gorm.io/gorm"
 )
 
@@ -14,8 +16,14 @@ type Server struct {
 	Router		*mux.Router
 }
 
-func (server *Server) Initialize() {
-	fmt.Println("welcome to Online Shop")
+type AppConfig struct {
+	AppName 	string
+	AppEnv		string
+	AppPort		string
+}
+
+func (server *Server) Initialize(appConfig AppConfig ) {
+	fmt.Println("welcome to " + appConfig.AppName)
 
 	server.Router = mux.NewRouter()
 	server.InitializeRoute()
@@ -26,9 +34,27 @@ func (server *Server) Run(addr string){
 	log.Fatal(http.ListenAndServe(addr,server.Router))
 }
 
+func getEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+
+	return fallback
+}
+
 func Run() {
 	var server = Server{}
+	var appConfig = AppConfig{}
 
-	server.Initialize()
-	server.Run(":9000")
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error on Loading .env file")
+	}
+
+	appConfig.AppName = getEnv("APP_NAME", "Online Shop")
+	appConfig.AppEnv = getEnv("APP_ENV", "development")
+	appConfig.AppPort = getEnv("APP_PORT", "9000")
+
+	server.Initialize(appConfig)
+	server.Run(":" + appConfig.AppPort)
 }
