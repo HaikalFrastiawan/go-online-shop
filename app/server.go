@@ -13,42 +13,56 @@ import (
 )
 
 type Server struct {
-	DB			*gorm.DB
-	Router		*mux.Router
+	DB     *gorm.DB
+	Router *mux.Router
 }
 
 type AppConfig struct {
-	AppName 	string
-	AppEnv		string
-	AppPort		string
+	AppName string
+	AppEnv  string
+	AppPort string
 }
 
 type DBConfig struct {
-	DBHost		string
-	DBUser		string
-	DBPassword	string
-	DBName		string
-	DBPort		string	
+	DBHost     string
+	DBUser     string
+	DBPassword string
+	DBName     string
+	DBPort     string
 }
 
-func (server *Server) Initialize(appConfig AppConfig,dbConfig DBConfig ) {
+func (server *Server) Initialize(appConfig AppConfig, dbConfig DBConfig) {
 	fmt.Println("welcome to " + appConfig.AppName)
 
-	var err error 
-	dsn := fmt.Sprintf( "host=%s user=%s password=%s  dbname=%s  port=%s sslmode=disable", dbConfig.DBHost, dbConfig.DBUser, dbConfig.DBPassword,dbConfig.DBName, dbConfig.DBPort)
+	server.InitializeDB(dbConfig)
+	server.InitializeRoute()
+}
+
+func (server *Server) Run(addr string) {
+	fmt.Printf("Listening to port %s", addr)
+	log.Fatal(http.ListenAndServe(addr, server.Router))
+}
+
+func (server *Server) InitializeDB(dbConfig DBConfig) {
+
+	var err error
+
+	dsn := fmt.Sprintf("host=%s user=%s password=%s  dbname=%s  port=%s sslmode=disable", dbConfig.DBHost, dbConfig.DBUser, dbConfig.DBPassword, dbConfig.DBName, dbConfig.DBPort)
 
 	server.DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Koneksi gagal: %v", err)
 	}
 
-	server.Router = mux.NewRouter()
-	server.InitializeRoute()
-}
+	for _, model := range RegisterModels() {
+		err = server.DB.Debug().AutoMigrate(model.Model)
 
-func (server *Server) Run(addr string){
-	fmt.Printf("Listening to port %s", addr)
-	log.Fatal(http.ListenAndServe(addr,server.Router))
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	fmt.Println("Database Migrated Successfully")
 }
 
 func getEnv(key, fallback string) string {
@@ -78,8 +92,6 @@ func Run() {
 	dbConfig.DBPassword = getEnv("DB_PASSWORD", "password")
 	dbConfig.DBName = getEnv("DB_Name", "go_online_shop")
 	dbConfig.DBPort = getEnv("DB_Port", "5432")
-
-	
 
 	server.Initialize(appConfig, dbConfig)
 	server.Run(":" + appConfig.AppPort)
