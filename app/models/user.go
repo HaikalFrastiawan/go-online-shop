@@ -9,12 +9,12 @@ import (
 type User struct {
 	ID            string `gorm:size:36;not null;uniqueIndex;primary.key`
 	Address []Address
-	FristName     string `gorm:size:100;not null`
+	FirstName     string `gorm:size:100;not null`
 	LastName      string `gorm:size:100;not null`
 	Email         string `gorm:size:100;not null;uniqueIndex`
 	Password      string `gorm:size:255;not null`
 	RememberToken string `gorm:size:100;not null`
 	CreatedAt     time.Time
-	UpdateAt      time.Time
+	UpdatedAt      time.Time
 	DeletedAt     gorm.DeletedAt
 }
