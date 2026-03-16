@@ -1,0 +1,12 @@
+
+.env
+
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+go-online-shop
+
+vendor/
+.DS_Store

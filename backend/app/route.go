@@ -7,5 +7,5 @@ import (
 
 func (server *Server) InitializeRoute() {
 	server.Router = mux.NewRouter()
-	server.Router.HandleFunc("/", controllers.Home).Methods("Get")
+	server.Router.HandleFunc("/", controllers.Home(server.DB)).Methods("GET", "OPTIONS")
 }

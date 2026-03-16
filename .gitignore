@@ -1,12 +1,47 @@
-
-.env
-
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-go-online-shop
-
-vendor/
+# ========================
+# MAC OS / WINDOWS
+# ========================
 .DS_Store
+Thumbs.db
+
+# ========================
+# SECRETS & ENV VARIABLES
+# ========================
+# JANGAN PERNAH MENGUNGGAH FILE INI KE GITHUB!
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ========================
+# FRONTEND (React / Vite / Node)
+# ========================
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# ========================
+# BACKEND (Go)
+# ========================
+# File hasil compile Go (binaries)
+backend/main
+backend/*.exe
+backend/*.out
+backend/*.app
+# Folder vendor kalau kamu pakai go mod vendor
+backend/vendor/
+
+# ========================
+# IDE & EDITORS
+# ========================
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
