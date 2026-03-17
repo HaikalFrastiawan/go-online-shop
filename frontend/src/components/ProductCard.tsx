@@ -29,7 +29,8 @@ export default function ProductCard({ product }: Props) {
         </Link>
         <div className="flex items-center justify-between">
           <span className="text-lg font-bold text-primary">
-            Rp {product.price.toLocaleString("id-ID")}
+            {/* PERBAIKAN DI SINI: Bungkus product.price dengan Number() */}
+            Rp {Number(product.price).toLocaleString("id-ID")}
           </span>
           <button
             onClick={() => addToCart(product)}

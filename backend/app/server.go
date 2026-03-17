@@ -44,8 +44,24 @@ func (server *Server) Initialize(appConfig AppConfig, dbConfig DBConfig) {
 
 func (server *Server) Run(addr string) {
 	fmt.Printf("Listening to port %s", addr)
-	log.Fatal(http.ListenAndServe(addr, server.Router))
+	log.Fatal(http.ListenAndServe(addr, CORSMiddleware(server.Router)))
 }
+
+func CORSMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*") // Izinkan semua (localhost:8080/5173 dll)
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 
 func (server *Server) InitializeDB(dbConfig DBConfig) {
 

@@ -4,8 +4,14 @@ import (
 	"github.com/HaikalFrastiawan/go-online-shop/app/controllers"
 	"github.com/gorilla/mux"
 )
-
 func (server *Server) InitializeRoute() {
 	server.Router = mux.NewRouter()
-	server.Router.HandleFunc("/", controllers.Home(server.DB)).Methods("GET", "OPTIONS")
+
+	server.Router.Use(CORSMiddleware)
+	server.Router.HandleFunc("/products", controllers.Home(server.DB)).Methods("GET", "OPTIONS")
+
+	server.Router.HandleFunc("/products/{id}", controllers.Home(server.DB)).Methods("GET", "OPTIONS")
+
+    server.Router.HandleFunc("/", controllers.Home(server.DB)).Methods("GET", "OPTIONS")
 }
+

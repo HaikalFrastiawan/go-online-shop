@@ -26,8 +26,8 @@ func Home(db *gorm.DB) http.HandlerFunc {
 		var products []models.Product
 		
 		// 2. Gunakan db yang di-passing dari parameter atas
-		db.Find(&products) 
-
+		db.Preload("ProductImages").Find(&products)
+		
 		err := json.NewEncoder(w).Encode(products)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
