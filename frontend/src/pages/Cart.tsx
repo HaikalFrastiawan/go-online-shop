@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Trash2, Minus, Plus, ShoppingBag } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { getImageUrl } from "@/services/api";
 
 export default function Cart() {
   const { items, removeFromCart, updateQuantity, totalPrice } = useCart();
@@ -22,7 +23,7 @@ export default function Cart() {
 
       <div className="space-y-4">
         {items.map(({ product, quantity }) => {
-          const imageUrl = product.images?.[0]?.url || `https://placehold.co/100x100/e2e8f0/64748b?text=${encodeURIComponent(product.name.charAt(0))}`;
+          const imageUrl = product.images?.[0]?.url ? getImageUrl(product.images[0].url) : `https://placehold.co/100x100/e2e8f0/64748b?text=${encodeURIComponent(product.name.charAt(0))}`;
           return (
             <div key={product.id} className="flex gap-4 p-4 bg-card rounded-xl border border-border">
               <img src={imageUrl} alt={product.name} className="h-20 w-20 rounded-lg object-cover shrink-0" />

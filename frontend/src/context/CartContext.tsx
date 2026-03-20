@@ -12,15 +12,15 @@ interface CartState {
 
 type CartAction =
   | { type: "ADD"; product: Product; quantity?: number }
-  | { type: "REMOVE"; productId: number }
-  | { type: "UPDATE_QTY"; productId: number; quantity: number }
+  | { type: "REMOVE"; productId: string }
+  | { type: "UPDATE_QTY"; productId: string; quantity: number }
   | { type: "CLEAR" };
 
 const CartContext = createContext<{
   items: CartItem[];
   addToCart: (product: Product, quantity?: number) => void;
-  removeFromCart: (productId: number) => void;
-  updateQuantity: (productId: number, quantity: number) => void;
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
@@ -61,8 +61,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, { items: [] });
 
   const addToCart = (product: Product, quantity?: number) => dispatch({ type: "ADD", product, quantity });
-  const removeFromCart = (productId: number) => dispatch({ type: "REMOVE", productId });
-  const updateQuantity = (productId: number, quantity: number) => dispatch({ type: "UPDATE_QTY", productId, quantity });
+  const removeFromCart = (productId: string) => dispatch({ type: "REMOVE", productId });
+  const updateQuantity = (productId: string, quantity: number) => dispatch({ type: "UPDATE_QTY", productId, quantity });
   const clearCart = () => dispatch({ type: "CLEAR" });
 
   const totalItems = state.items.reduce((sum, i) => sum + i.quantity, 0);

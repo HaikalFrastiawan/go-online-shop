@@ -37,7 +37,7 @@ type DBConfig struct {
 func (server *Server) Initialize(appConfig AppConfig, dbConfig DBConfig) {
 	fmt.Println("welcome to " + appConfig.AppName)
 
-	// server.InitializeDB(dbConfig)
+	server.InitializeDB(dbConfig)
 	server.InitializeRoute()
 	// seeders.DBSeed(server.DB)
 }
@@ -62,7 +62,6 @@ func CORSMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-
 func (server *Server) InitializeDB(dbConfig DBConfig) {
 
 	var err error
@@ -76,8 +75,8 @@ func (server *Server) InitializeDB(dbConfig DBConfig) {
 
 }
 
-func (server *Server) dbMigrate(){
-		for _, model := range RegisterModels() {
+func (server *Server) dbMigrate() {
+	for _, model := range RegisterModels() {
 		err := server.DB.Debug().AutoMigrate(model.Model)
 
 		if err != nil {
@@ -88,27 +87,26 @@ func (server *Server) dbMigrate(){
 	fmt.Println("Database Migrated Successfully")
 }
 
-
-func ( server *Server ) initCommands(config AppConfig, dbConfig DBConfig){
+func (server *Server) initCommands(config AppConfig, dbConfig DBConfig) {
 	server.InitializeDB(dbConfig)
 
 	cmdApp := cli.NewApp()
 	cmdApp.Commands = []cli.Command{
 		{
-			Name : "db:migrate",
+			Name: "db:migrate",
 			Action: func(c *cli.Context) error {
 				server.dbMigrate()
 				return nil
 
 			},
-		}, 
+		},
 		{
-			Name : "db:seed",
+			Name: "db:seed",
 			Action: func(c *cli.Context) error {
 				err := seeders.DBSeed(server.DB)
 				if err != nil {
 					log.Fatal(err)
-				}	
+				}
 				return nil
 			},
 		},
@@ -119,7 +117,7 @@ func ( server *Server ) initCommands(config AppConfig, dbConfig DBConfig){
 		log.Fatal(err)
 	}
 
-}	
+}
 
 func getEnv(key, fallback string) string {
 	if value, ok := os.LookupEnv(key); ok {
@@ -139,8 +137,6 @@ func Run() {
 		log.Fatal("Error on Loading .env file")
 	}
 
-
-
 	appConfig.AppName = getEnv("APP_NAME", "Online Shop")
 	appConfig.AppEnv = getEnv("APP_ENV", "development")
 	appConfig.AppPort = getEnv("APP_PORT", "9000")
@@ -154,15 +150,14 @@ func Run() {
 	//cli :
 	//go run main.go db:migrate
 	//go run main.go db:seed
-	
+
 	flag.Parse()
 	arg := flag.Arg(0)
 	if arg != "" {
 		server.initCommands(appConfig, dbConfig)
-	}else  {
+	} else {
 		server.Initialize(appConfig, dbConfig)
 		server.Run(":" + appConfig.AppPort)
 	}
-	
 
 }

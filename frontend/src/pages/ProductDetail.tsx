@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ShoppingCart, Minus, Plus, ChevronLeft, Loader2 } from "lucide-react";
-import { getProduct, type Product } from "@/services/api";
+import { getProduct, type Product, getImageUrl } from "@/services/api";
 import { useCart } from "@/context/CartContext";
 
 export default function ProductDetail() {
@@ -15,12 +15,12 @@ export default function ProductDetail() {
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-    getProduct(Number(id))
+    getProduct(id)
       .then((res) => setProduct(res.data))
       .catch(() => {
         // Mock fallback
         setProduct({
-          id: Number(id),
+          id: id,
           name: "Sample Product",
           description: "This is a high-quality product with excellent features. Made from premium materials for lasting durability. Perfect for everyday use.",
           price: 299000,
@@ -48,7 +48,7 @@ export default function ProductDetail() {
     );
   }
 
-  const imageUrl = product.images?.[0]?.url || `https://placehold.co/600x600/e2e8f0/64748b?text=${encodeURIComponent(product.name)}`;
+  const imageUrl = product.images?.[0]?.url ? getImageUrl(product.images[0].url) : `https://placehold.co/600x600/e2e8f0/64748b?text=${encodeURIComponent(product.name)}`;
 
   return (
     <div>

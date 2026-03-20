@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import type { Product } from "@/services/api";
+import { getImageUrl } from "@/services/api";
 
 interface Props {
   product: Product;
@@ -9,7 +10,7 @@ interface Props {
 
 export default function ProductCard({ product }: Props) {
   const { addToCart } = useCart();
-  const imageUrl = product.images?.[0]?.url || `https://placehold.co/400x400/e2e8f0/64748b?text=${encodeURIComponent(product.name)}`;
+  const imageUrl = product.images?.[0]?.url ? getImageUrl(product.images[0].url) : `https://placehold.co/400x400/e2e8f0/64748b?text=${encodeURIComponent(product.name)}`;
 
   return (
     <div className="product-card group">

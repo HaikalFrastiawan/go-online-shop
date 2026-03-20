@@ -3,6 +3,12 @@ import axios from "axios";
 // Sesuaikan dengan port backend Go kamu (9000)
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:9000";
 
+export const getImageUrl = (filename?: string) => {
+  if (!filename) return "";
+  if (filename.startsWith("http")) return filename;
+  return `${API_BASE_URL}/public/uploads/${filename}`;
+};
+
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
@@ -15,7 +21,7 @@ api.interceptors.request.use((config) => {
 });
 
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   description: string;
   price: number;
@@ -69,7 +75,7 @@ export interface Address {
 
 // Products
 export const getProducts = () => api.get<Product[]>("/products");
-export const getProduct = (id: number) => api.get<Product>(`/products/${id}`);
+export const getProduct = (id: string) => api.get<Product>(`/products/${id}`);
 
 // Categories
 export const getCategories = () => api.get<Category[]>("/categories");
